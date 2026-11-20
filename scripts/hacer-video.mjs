@@ -190,7 +190,7 @@ if (REVISAR) { console.log('\n✓ Guiones correctos. Siguiente paso: node script
 
 // ── voces ──
 const PY = MOTOR === 'edge' ? python() : null;
-if (MOTOR === 'edge' && !PY) salir('Falta edge-tts (Python). Instálalo:  python -m pip install edge-tts   (o en el kit: python -m venv .venv y .venv/bin/pip install edge-tts)');
+if (MOTOR === 'edge' && !PY) salir('Falta edge-tts (Python). Instálalo en la carpeta del kit:  python -m venv .venv  y luego  .venv/bin/pip install edge-tts pillow  (Windows: .venv\\Scripts\\pip install edge-tts pillow)');
 const RECORTE = 'silenceremove=start_periods=1:start_threshold=-45dB:stop_periods=-1:stop_duration=0.3:stop_silence=0.18:stop_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse';
 const SOLO_FINAL = 'areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse';
 

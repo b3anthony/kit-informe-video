@@ -14,8 +14,12 @@ Necesitas [Node.js 20+](https://nodejs.org), [Python 3](https://www.python.org) 
 git clone https://github.com/b3anthony/kit-informe-video.git
 cd kit-informe-video
 npm install
-python -m pip install edge-tts pillow
+python -m venv .venv
+.venv/bin/pip install edge-tts pillow          # Windows: .venv\Scripts\pip install edge-tts pillow
 ```
+
+Avisos normales de `npm install` que puedes ignorar: «vulnerabilities» (son de herramientas internas de Remotion; **no**
+ejecutes `npm audit fix --force`, rompe las versiones) y «install scripts blocked: esbuild» (funciona igual).
 
 **Voz (recomendado):** crea una cuenta gratis en [deepgram.com](https://deepgram.com) y crea en esta carpeta un
 archivo `.env` con:

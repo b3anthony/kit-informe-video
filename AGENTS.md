@@ -297,7 +297,7 @@ que podrían sonar mal: añádelas a `pronunciacion` del guion. Siglas: letras s
 
 | Mensaje | Qué hacer |
 |---|---|
-| `Falta edge-tts` | `python -m pip install edge-tts` (ver README). |
+| `Falta edge-tts` | `python -m venv .venv` y `.venv/bin/pip install edge-tts pillow` (Windows: `.venv\Scripts\pip …`). |
 | `No encuentro ffmpeg` | Instalar ffmpeg (README). |
 | `Cannot find module '@remotion/…'` | Ejecutar `npm install` en la raíz del kit. |
 | `tipo «x» no existe` / `necesita datos.items` | Mira «Tipos de escena» y copia la forma del ejemplo. |
