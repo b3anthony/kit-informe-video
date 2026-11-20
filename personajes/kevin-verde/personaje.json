@@ -1,0 +1,12 @@
+{
+ "nombre": "kevin-verde",
+ "tono": "#4ADE9A",
+ "cx": 386,
+ "pies": 1089,
+ "caras": [
+  "normal",
+  "abierta",
+  "serio",
+  "sorpresa"
+ ]
+}

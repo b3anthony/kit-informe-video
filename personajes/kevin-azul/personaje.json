@@ -1,0 +1,12 @@
+{
+ "nombre": "kevin-azul",
+ "tono": "#4C8DF6",
+ "cx": 386,
+ "pies": 1089,
+ "caras": [
+  "normal",
+  "abierta",
+  "serio",
+  "sorpresa"
+ ]
+}

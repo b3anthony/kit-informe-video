@@ -1,0 +1,10 @@
+{
+ "nombre": "claude",
+ "tono": "#D9653F",
+ "cx": 383,
+ "pies": 970,
+ "caras": [
+  "normal",
+  "abierta"
+ ]
+}

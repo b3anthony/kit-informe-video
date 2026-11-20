@@ -1,0 +1,12 @@
+{
+ "nombre": "kevin-morado",
+ "tono": "#A78BFA",
+ "cx": 386,
+ "pies": 1089,
+ "caras": [
+  "normal",
+  "abierta",
+  "serio",
+  "sorpresa"
+ ]
+}

@@ -1,0 +1,10 @@
+{
+  "empresa": "Giantucchi",
+  "equipo": "DevCore",
+  "periodo": "16–20 nov 2026",
+  "periodo_largo": "Semana del 16 al 20 de noviembre de 2026",
+  "presentador": { "personaje": "claude" },
+  "integrantes": [
+    { "guion": "ana/guion.json", "tema": "Migración sin cortes" }
+  ]
+}

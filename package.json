@@ -1,0 +1,26 @@
+{
+  "name": "kit-informe-video",
+  "private": true,
+  "type": "module",
+  "description": "Vídeos de informe semanal (1920×1080) a partir del informe de cada integrante. Lee AGENTS.md.",
+  "scripts": {
+    "revisar": "node scripts/hacer-video.mjs --revisar",
+    "video": "node scripts/hacer-video.mjs",
+    "studio": "remotion studio remotion/index.ts",
+    "tipos": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.528",
+    "@remotion/cli": "4.0.528",
+    "@remotion/google-fonts": "4.0.528",
+    "@remotion/renderer": "4.0.528",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.528"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.3",
+    "@types/node": "22.10.2",
+    "typescript": "5.4.5"
+  }
+}

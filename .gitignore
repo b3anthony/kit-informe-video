@@ -1,0 +1,13 @@
+node_modules/
+.venv/
+.env
+informes/*
+!informes/LEEME.md
+*.mp4
+!ejemplos/**/*.mp4
+__pycache__/
+# Informes sueltos en la raíz (son privados): van en informes/<semana>/fuentes/
+/informes.md
+/*.pdf
+/*.docx
+/*.txt

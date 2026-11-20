@@ -1,0 +1,12 @@
+{
+ "nombre": "kevin-naranja",
+ "tono": "#EF6E2A",
+ "cx": 386,
+ "pies": 1089,
+ "caras": [
+  "normal",
+  "abierta",
+  "serio",
+  "sorpresa"
+ ]
+}
