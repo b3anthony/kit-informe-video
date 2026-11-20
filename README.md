@@ -6,12 +6,19 @@ Le das tu informe (.md, .txt, .pdf o .docx) a tu IA y te devuelve un vídeo de 1
 Funciona con **Antigravity, Codex, Claude Code, OpenCode o Cline con DeepSeek**: cualquier IA que lea archivos y ejecute
 comandos. Las instrucciones para la IA están en `AGENTS.md`.
 
-## 1. Instalar (una vez)
+## 1. Descargar
+
+```bash
+git clone https://github.com/b3anthony/kit-informe-video.git
+```
+
+¿Sin git? Arriba en esta página: botón verde **`<> Code`** → **Download ZIP**, y descomprímelo.
+
+## 2. Instalar (una vez)
 
 Solo necesitas **[Node.js](https://nodejs.org)** (botón «LTS»). Lo demás se instala solo.
 
-Descarga el kit: botón verde **Code → Download ZIP** (y descomprímelo), o `git clone https://github.com/b3anthony/kit-informe-video.git`.
-Abre esa carpeta en tu IA y dile:
+Abre la carpeta `kit-informe-video` en tu IA y dile:
 
 ```
 Instala este kit (npm install). Mi clave de Deepgram es: <tu clave>
@@ -25,7 +32,7 @@ Tu clave se queda en tu equipo: `.env` no se sube a GitHub.
 Si `npm install` muestra avisos de «vulnerabilities» o «install scripts blocked: esbuild», son normales: no hagas nada
 (y no ejecutes `npm audit fix --force`).
 
-## 2. Pedir el vídeo
+## 3. Pedir el vídeo
 
 Abre la carpeta `kit-informe-video` en tu IA, pon tu informe dentro y pega esto (cambia lo que va entre `< >`):
 
@@ -51,7 +58,7 @@ Integrantes:
 
 Cuando acabe (tarda unos 5 minutos), el vídeo está en `informes/<semana>/salida/informe-completo.mp4`.
 
-## 3. Corregir algo
+## 4. Corregir algo
 
 Díselo a la IA («cambia la cifra de logros», «acorta el gancho»). Solo se rehace lo que cambió.
 
