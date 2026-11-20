@@ -7,7 +7,8 @@
 //   --sin-unir   no junta los vídeos al final
 //   --textos     lista, por carpeta, lo que hay que escribir en Google Vids (motor «manual») y el nombre de cada audio
 //
-// Necesita: Node 20+, ffmpeg en el PATH y, según el motor de voz, edge-tts (Python) o DEEPGRAM_API_KEY en .env.
+// Necesita solo Node 20+. La primera vez instala lo demás solo (npm install; Python propio en .venv si se usa la voz gratis).
+// ffmpeg: el del sistema si existe; si no, el que trae Remotion. Voz: DEEPGRAM_API_KEY en .env, o edge-tts (gratis).
 import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -15,6 +16,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { alinear, proporcionales } from './tiempos.mjs';
+import { duracionArchivo, ffmpeg as ffmpegKit, herramientas, prepararAudio } from './audio.mjs';
+import { pythonConEdge } from './instalar.mjs';
 
 const KIT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -31,12 +34,9 @@ const leerJSON = (f, que) => {
   if (!existsSync(f)) salir(`No existe ${que}: ${f}`);
   try { return JSON.parse(readFileSync(f, 'utf8')); } catch (e) { salir(`${que} no es JSON válido (${f}): ${e.message}\n  Arregla: revisa comas, comillas dobles y llaves.`); }
 };
-const ffmpeg = (...a) => {
-  const r = spawnSync('ffmpeg', ['-v', 'error', '-y', ...a], { encoding: 'utf8' });
-  if (r.error) salir('No encuentro ffmpeg. Instálalo y ponlo en el PATH (Windows: winget install ffmpeg · macOS: brew install ffmpeg · Linux: apt install ffmpeg).');
-  if (r.status !== 0) salir(`ffmpeg falló: ${r.stderr}`);
-};
-const duracion = (f) => Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f], { encoding: 'utf8' }).trim());
+const ffmpeg = (...a) => { try { ffmpegKit(...a); } catch (e) { salir(e.message); } };
+const duracion = (f) => { try { return duracionArchivo(f); } catch (e) { salir(e.message); } };
+const audio = (entrada, salida, op) => { try { return prepararAudio(entrada, salida, op); } catch (e) { salir(e.message); } };
 const huella = (...x) => createHash('sha1').update(JSON.stringify(x)).digest('hex').slice(0, 16);
 const cargarEnv = () => {
   for (const f of [path.join(KIT, '.env'), path.join(process.cwd(), '.env')]) {
@@ -48,14 +48,12 @@ const cargarEnv = () => {
   }
 };
 cargarEnv();
-const python = () => {
-  for (const p of [path.join(KIT, '.venv', 'bin', 'python'), path.join(KIT, '.venv', 'Scripts', 'python.exe'), 'python3', 'python']) {
-    if (p.includes(path.sep) && !existsSync(p)) continue;
-    const r = spawnSync(p, ['-c', 'import edge_tts'], { encoding: 'utf8' });
-    if (r.status === 0) return p;
-  }
-  return null;
-};
+// Primera vez: si falta node_modules, se instala solo (trae Remotion, Chrome y su propio ffmpeg).
+if (!existsSync(path.join(KIT, 'node_modules', '@remotion', 'renderer'))) {
+  console.log('\nPrimera vez: instalando dependencias (npm install, ~1 min)…');
+  const r = spawnSync('npm', ['install', '--no-audit', '--no-fund'], { cwd: KIT, stdio: 'inherit', shell: process.platform === 'win32' });
+  if (r.status !== 0) salir('npm install falló. ¿Está instalado Node.js 20 o más? (nodejs.org)');
+}
 
 // ── equipo y guiones ──
 const RAIZ = path.dirname(path.resolve(archivoEquipo));
@@ -189,10 +187,8 @@ if (TEXTOS) {
 if (REVISAR) { console.log('\n✓ Guiones correctos. Siguiente paso: node scripts/hacer-video.mjs ' + archivoEquipo + '\n'); process.exit(0); }
 
 // ── voces ──
-const PY = MOTOR === 'edge' ? python() : null;
-if (MOTOR === 'edge' && !PY) salir('Falta edge-tts (Python). Instálalo en la carpeta del kit:  python -m venv .venv  y luego  .venv/bin/pip install edge-tts pillow  (Windows: .venv\\Scripts\\pip install edge-tts pillow)');
-const RECORTE = 'silenceremove=start_periods=1:start_threshold=-45dB:stop_periods=-1:stop_duration=0.3:stop_silence=0.18:stop_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse';
-const SOLO_FINAL = 'areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse';
+const PY = MOTOR === 'edge' ? pythonConEdge() : null;
+if (MOTOR === 'edge' && !PY) salir('La voz gratis (edge-tts) necesita Python 3 y no lo encuentro. Dos opciones:\n  1) Pon tu clave de Deepgram en el archivo .env (DEEPGRAM_API_KEY=…) y la voz irá por Deepgram, sin Python.\n  2) Instala Python 3 (python.org; en Windows marca «Add to PATH») y vuelve a ejecutar.');
 
 async function deepgramSTT(wav) {
   const r = await fetch('https://api.deepgram.com/v1/listen?model=nova-3&language=es', { method: 'POST', headers: { Authorization: `Token ${process.env.DEEPGRAM_API_KEY}`, 'Content-Type': 'audio/wav' }, body: readFileSync(wav) });
@@ -218,8 +214,8 @@ async function voz(carpeta, id, frase, decir, vozNombre, velocidad, expresividad
     const js = path.join(dirV, `${id}.palabras.json`);
     const pct = Math.round((velocidad - 1) * 100);
     const r = spawnSync(PY, [path.join(KIT, 'scripts', 'voz_edge.py'), decir, vozNombre, mp3, js, `${pct >= 0 ? '+' : ''}${pct}%`], { encoding: 'utf8' });
-    if (r.status !== 0) salir(`edge-tts falló en «${id}» (voz ${vozNombre}): ${r.stderr || r.stdout}\n  ¿Hay internet? ¿Existe la voz? Lista: edge-tts --list-voices | grep es-`);
-    ffmpeg('-i', mp3, '-af', `${SOLO_FINAL},aresample=48000`, '-ac', '1', salida);
+    if (r.status !== 0) salir(`edge-tts falló en «${id}» (voz ${vozNombre}): ${r.stderr || r.stdout}\n  ¿Hay internet? ¿Existe esa voz? (AGENTS.md, «Voces»)`);
+    audio(mp3, salida, { modo: 'final' });
     oidas = JSON.parse(readFileSync(js, 'utf8'));
   } else if (MOTOR === 'deepgram') {
     const crudo = path.join(dirV, `${id}.dg.wav`);
@@ -231,12 +227,12 @@ async function voz(carpeta, id, frase, decir, vozNombre, velocidad, expresividad
     });
     if (!r.ok) salir(`Deepgram (voz ${vozNombre}) respondió ${r.status} en «${id}»: ${await r.text()}\n  ¿Existe esa voz? Prueba con otra (AGENTS.md, «Voces»).`);
     writeFileSync(crudo, Buffer.from(await r.arrayBuffer()));
-    ffmpeg('-i', crudo, '-af', `${RECORTE}${velocidad !== 1 && !esFlux ? `,atempo=${velocidad}` : ''},aresample=48000`, '-ac', '1', salida);
+    audio(crudo, salida, { modo: 'todo', tempo: velocidad !== 1 && !esFlux ? velocidad : 1 });
     oidas = await deepgramSTT(salida);
   } else {
     const fuente = ['wav', 'mp3', 'm4a', 'ogg'].map((x) => path.join(dirV, `${id}.${x}`)).find(existsSync);
     if (!fuente) salir(`motor "manual": falta el audio voces/${id}.wav (o .mp3) en ${carpeta}\n  Genera esa frase en Google Vids o grábala y guárdala con ese nombre (mira AGENTS.md, «Voz con Google Vids»).`);
-    ffmpeg('-i', fuente, '-af', `${RECORTE},aresample=48000`, '-ac', '1', salida);
+    audio(fuente, salida, { modo: 'todo' });
     oidas = process.env.DEEPGRAM_API_KEY ? await deepgramSTT(salida) : null;
   }
   const dur = duracion(salida);

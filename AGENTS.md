@@ -10,6 +10,11 @@ subtítulos palabra a palabra y su personaje moviendo la boca) y el **cierre**. 
 
 ## El flujo (6 pasos)
 
+0. **Instalación (solo la primera vez, la haces tú, no el usuario):** si no existe `node_modules/`, ejecuta `npm install`
+   en la raíz del kit. Instala Remotion, Chrome sin ventana, un ffmpeg propio y, si hay Python, la voz gratis en `.venv`.
+   Los avisos de «vulnerabilities» y «install scripts blocked: esbuild» son normales: **no** ejecutes `npm audit fix`.
+   Si el usuario te da su clave de Deepgram, guárdala en el archivo `.env` de la raíz del kit (una línea:
+   `DEEPGRAM_API_KEY=<clave>`) y en ningún otro sitio. Si falta Node.js, pídele que lo instale desde nodejs.org.
 1. **Crear la carpeta de la semana** en `informes/`, por ejemplo `informes/2026-11-20_devcore/`. Dentro:
    - `fuentes/` → el informe de cada integrante (PDF, .docx, .md o el texto que te pegue el usuario);
    - `equipo.json` → los datos del equipo (formato abajo);
@@ -28,8 +33,8 @@ subtítulos palabra a palabra y su personaje moviendo la boca) y el **cierre**. 
 6. **Corregir una parte:** cambia el `guion.json` y repite el paso 4 con `--solo <carpeta-del-integrante>`
    (o `--solo portada` / `--solo cierre`). Vuelve a unir el vídeo completo solo.
 
-**Instalación** (una vez por máquina): está en `README.md`. Si un comando falla por falta de `node_modules`, `ffmpeg` o `edge-tts`,
-el mensaje de error dice qué instalar. Díselo al usuario.
+Si un comando falla, el mensaje dice qué hacer. Si puedes hacerlo tú (instalar algo con `npm install`), hazlo; no le
+pidas al usuario que ejecute comandos.
 
 ---
 
@@ -297,9 +302,8 @@ que podrían sonar mal: añádelas a `pronunciacion` del guion. Siglas: letras s
 
 | Mensaje | Qué hacer |
 |---|---|
-| `Falta edge-tts` | `python -m venv .venv` y `.venv/bin/pip install edge-tts pillow` (Windows: `.venv\Scripts\pip …`). |
-| `No encuentro ffmpeg` | Instalar ffmpeg (README). |
-| `Cannot find module '@remotion/…'` | Ejecutar `npm install` en la raíz del kit. |
+| `La voz gratis (edge-tts) necesita Python` | Usa Deepgram (clave en `.env`) o pide al usuario instalar Python. Luego `node scripts/instalar.mjs`. |
+| `Cannot find module '@remotion/…'` / `No encuentro ffmpeg` | Ejecuta `npm install` en la raíz del kit. |
 | `tipo «x» no existe` / `necesita datos.items` | Mira «Tipos de escena» y copia la forma del ejemplo. |
 | Un texto se sale de su tarjeta | Acórtalo (respeta los máximos de caracteres de cada tipo). |
 | Una palabra suena mal | Añádela a `pronunciacion` del guion y vuelve a generar: solo se rehace esa frase. |

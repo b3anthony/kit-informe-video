@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Vídeos de informe semanal (1920×1080) a partir del informe de cada integrante. Lee AGENTS.md.",
   "scripts": {
+    "postinstall": "node scripts/instalar.mjs",
     "revisar": "node scripts/hacer-video.mjs --revisar",
     "video": "node scripts/hacer-video.mjs",
     "studio": "remotion studio remotion/index.ts",

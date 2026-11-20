@@ -8,27 +8,22 @@ comandos. Las instrucciones para la IA están en `AGENTS.md`.
 
 ## 1. Instalar (una vez)
 
-Necesitas [Node.js 20+](https://nodejs.org), [Python 3](https://www.python.org) y [ffmpeg](https://ffmpeg.org/download.html).
+Solo necesitas **[Node.js](https://nodejs.org)** (botón «LTS»). Lo demás se instala solo.
 
-```bash
-git clone https://github.com/b3anthony/kit-informe-video.git
-cd kit-informe-video
-npm install
-python -m venv .venv
-.venv/bin/pip install edge-tts pillow          # Windows: .venv\Scripts\pip install edge-tts pillow
-```
-
-Avisos normales de `npm install` que puedes ignorar: «vulnerabilities» (son de herramientas internas de Remotion; **no**
-ejecutes `npm audit fix --force`, rompe las versiones) y «install scripts blocked: esbuild» (funciona igual).
-
-**Voz (recomendado):** crea una cuenta gratis en [deepgram.com](https://deepgram.com) y crea en esta carpeta un
-archivo `.env` con:
+Descarga el kit: botón verde **Code → Download ZIP** (y descomprímelo), o `git clone https://github.com/b3anthony/kit-informe-video.git`.
+Abre esa carpeta en tu IA y dile:
 
 ```
-DEEPGRAM_API_KEY=tu_clave
+Instala este kit (npm install). Mi clave de Deepgram es: <tu clave>
 ```
 
-Sin clave también funciona, con voces gratis (edge-tts). La clave es tuya: el archivo `.env` no se sube a GitHub.
+La IA ejecuta `npm install` (trae Remotion, su propio ffmpeg y la voz gratis) y guarda tu clave en el archivo `.env`.
+La clave es opcional: consíguela gratis en [deepgram.com](https://deepgram.com). Sin clave también funciona, con una voz
+gratis (edge-tts; en Windows necesita [Python](https://www.python.org), marcando «Add to PATH»; en Mac y Linux ya viene).
+Tu clave se queda en tu equipo: `.env` no se sube a GitHub.
+
+Si `npm install` muestra avisos de «vulnerabilities» o «install scripts blocked: esbuild», son normales: no hagas nada
+(y no ejecutes `npm audit fix --force`).
 
 ## 2. Pedir el vídeo
 
